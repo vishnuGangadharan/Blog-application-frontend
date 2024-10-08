@@ -2,6 +2,7 @@ import axiosInstance from "../Configuration/axiosInstance";
 const token = localStorage.getItem('token')
 import { toast } from 'react-toastify';
 
+console.log('kkkkkkkkkkkkkkkkkkkk',token);
 
 
 export const signup = async(data) => {

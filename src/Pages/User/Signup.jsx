@@ -28,8 +28,8 @@ const SignUp= () => {
            console.log('res',response);
            if(response.status == 200){
             toast.success(response.data.message)
-            dispatch(setUserInfo(response.data.data))
-            navigate('/')
+            // dispatch(setUserInfo(response.data.data))
+            navigate('/login')
            }
 
             
