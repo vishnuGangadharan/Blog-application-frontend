@@ -48,12 +48,15 @@ export const BlogPost = async(data) => {
 
 export const getBlog = async() => {
     try {
+        const token = await localStorage.getItem('token')
+        if(token){
         const response = await axiosInstance.get('/getBlog',{
             headers : {
                 'Authorization': token
             }
         })
         return response
+    }
     } catch (error) {
         console.log(error);
         toast.error(error.response.data.message)
@@ -65,13 +68,15 @@ export const getBlog = async() => {
 export const showUserBlogs = async() => {
     try {
         console.log('ffff');
-        
+        const token = await localStorage.getItem('token')
+        if(token){
         const response = await axiosInstance.get('/userPosts' ,{
             headers : {
                 'Authorization': token
             }
         })
         return response
+    }
     } catch (error) {
         console.log(error);
         toast.error(error.response.data.message)
