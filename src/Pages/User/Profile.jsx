@@ -103,7 +103,7 @@ const Profile = () => {
                   <Image
                     alt="Card background"
                     className="object-cover w-full h-auto rounded-t-lg"
-                    src={`http://localhost:5000/uploads/${item.coverImage}`}
+                    src={item.coverImage}
                     onClick={() => blogDetails(item._id)}
                     width={270}
                     height={180}

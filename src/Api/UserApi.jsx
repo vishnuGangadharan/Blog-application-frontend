@@ -33,7 +33,7 @@ export const BlogPost = async(data) => {
     try {
         const response = await axiosInstance.post('/addPost', data ,{
             headers: {
-                'Content-Type': 'multipart/form-data',
+                // 'Content-Type': 'multipart/form-data',
                 'Authorization': token
             }
         })
@@ -123,7 +123,6 @@ export const editBlogPost = async (id, data) => {
         
       const response = await axiosInstance.post('/editPost', data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           'Authorization': token,
         },
         params: { id }, 

@@ -13,7 +13,9 @@ import {
   import { toast } from "react-toastify";
   import { FiUpload } from "react-icons/fi";
   import { editBlogPost } from "../Api/UserApi";
-  
+  import { getDownloadURL, getStorage , ref , uploadBytes} from "firebase/storage";
+  import app from "../Configuration/firebase";
+
   const EditModal = ({
     coverImageProp,
     headingProp,
@@ -33,12 +35,12 @@ import {
     const [optionalImagePrev, setOptionalImagePrev] = useState(optionalImageProp);
     const [errors, setErrors] = useState({});
   
-    const ref = useRef(null);
+    const reff = useRef(null);
   
     // Update preview when the props change
     useEffect(() => {
-    setCoverImagePrev(`http://localhost:5000/uploads/${coverImageProp}`);
-      setOptionalImagePrev(`http://localhost:5000/uploads/${optionalImageProp}`);
+    setCoverImagePrev(coverImageProp);
+      setOptionalImagePrev(optionalImageProp);
       setHeading(headingProp);
       setContent(contentProp);
     }, [coverImageProp, optionalImageProp, headingProp, contentProp]);
@@ -96,29 +98,41 @@ import {
         return;
       }
   
-      const formData = new FormData();
-  
+      let data ={}
+
+      let optionalImageUrl = null
+      let coverImageUrl = null
       // Append only the changed data
       if (coverImage) {
-        formData.append("coverImage", coverImage);
-      }
+        const storage  =  getStorage(app)
+        const storageRef = ref(storage, 'coverImage/'+ coverImage.name);
+        await uploadBytes(storageRef, coverImage)
+        coverImageUrl = await getDownloadURL(storageRef);
+        console.log('from fire base',coverImageUrl);
+        data.coverImage = coverImageUrl
+       }
+
       if (optionalImage) {
-        formData.append("optionalImage", optionalImage);
+        const storage  =  getStorage(app)
+        const storageRef = ref(storage, 'optionalImage/'+ optionalImage.name);
+        await uploadBytes(storageRef, optionalImage)
+        optionalImageUrl = await getDownloadURL(storageRef);
+        console.log('from fire base',optionalImageUrl);  
+        data.optionalImage = optionalImageUrl    
       }
+      
+
       if (heading !== headingProp) {
-        formData.append("heading", heading);
+        data.heading = heading;
       }
+    
       if (content !== contentProp) {
-        formData.append("content", content);
+       data.content = content;
       }
   
-      // Log formData for debugging
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
   
       try {
-        const response = await editBlogPost(id, formData);
+        const response = await editBlogPost(id, data);
         console.log("Responsexxxx:", response.data.data);
         onUpdate(response.data.data);
         
@@ -258,7 +272,7 @@ import {
                     className={`border rounded-lg p-2 shadow-sm ${
                       errors.content ? "border-red-500" : "border-gray-300"
                     }`}
-                    ref={ref}
+                    ref={reff}
                     value={content}
                     onChange={(newContent) => setContent(newContent)}
                   />

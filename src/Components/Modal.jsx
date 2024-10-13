@@ -13,12 +13,15 @@ import {
   import { FiUpload } from "react-icons/fi";
 import { BlogPost, getBlog } from "../Api/UserApi";
 import { toast } from "react-toastify";
-  
+import { getDownloadURL, getStorage , ref , uploadBytes} from "firebase/storage";
+import app from "../Configuration/firebase";
+
+
   const ModalOpen = ({newData}) => {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [content, setContent] = useState('');
-    const ref = useRef(null);
+    const reff = useRef(null);
     const [coverImage, setCoverImage] = useState(null);
     const [optionalImage, setOptionalImage] = useState(null);
     const [coverImagePrev, setCoverImagePrev] = useState(null);
@@ -82,21 +85,38 @@ import { toast } from "react-toastify";
       if (Object.keys(newErrors).length > 0) {
         return;
       }
-  
-      const formData = new FormData();
-      if(optionalImage){
-        formData.append('optionalImage', optionalImage)
-      }
-      formData.append('coverImage', coverImage);
-      formData.append('heading', heading);
-      formData.append('content', content);
- 
+      let optionalImageUrl = null;
+      let coverImageUrl = null;
 
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
+      
+      
+      if(coverImage){        
+        const storage  =  getStorage(app)
+        const storageRef = ref(storage, 'coverImage/'+ coverImage.name);
+        await uploadBytes(storageRef, coverImage)
+        coverImageUrl = await getDownloadURL(storageRef);
+        console.log('from fire base',coverImageUrl);
       }
       
-      const response = await BlogPost(formData)
+      
+      
+      if(optionalImage){
+        const storage  =  getStorage(app)
+        const storageRef = ref(storage, 'optionalImage/'+ optionalImage.name);
+        await uploadBytes(storageRef, optionalImage)
+        optionalImageUrl = await getDownloadURL(storageRef);
+        console.log('from fire base',optionalImageUrl);
+      }
+      let data ={
+        heading: heading,
+        content: content,
+        coverImage: coverImageUrl,
+      }
+      if(optionalImage){
+     data.optionalImage = optionalImageUrl
+      }
+      
+      const response = await BlogPost(data)
       console.log('ddddddddddddd',response)
       newData(response.data.data)
       toast.success('Blog Posted Successfully')
@@ -209,7 +229,7 @@ import { toast } from "react-toastify";
                     className={`border rounded-lg p-2 shadow-sm ${
                       errors.content ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    ref={ref}
+                    ref={reff}
                     value={content}
                     onChange={(content) => setContent(content)}
                   />
