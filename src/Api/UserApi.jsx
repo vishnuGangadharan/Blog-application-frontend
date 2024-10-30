@@ -34,7 +34,7 @@ export const BlogPost = async(data) => {
         const response = await axiosInstance.post('/addPost', data ,{
             headers: {
                 // 'Content-Type': 'multipart/form-data',
-                'Authorization': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         return response
@@ -52,7 +52,7 @@ export const getBlog = async() => {
         if(token){
         const response = await axiosInstance.get('/getBlog',{
             headers : {
-                'Authorization': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         return response
@@ -72,7 +72,7 @@ export const showUserBlogs = async() => {
         if(token){
         const response = await axiosInstance.get('/userPosts' ,{
             headers : {
-                'Authorization': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         return response
@@ -91,7 +91,7 @@ export const getBlogData = async(id) => {
         const response = await axiosInstance.get('/blogData', {
             params : {id},
             headers : {
-                'Authorization': token
+                'Authorization': `Bearer ${token}`,
             }   
         })
         return response
@@ -109,7 +109,7 @@ export const deleteBlog = async(id) => {
         const response = await axiosInstance.delete('/deleteBlog', {
             params : {id},
             headers : {
-                'Authorization': token
+                'Authorization': `Bearer ${token}`,
             }
         })
         return response
@@ -128,7 +128,7 @@ export const editBlogPost = async (id, data) => {
         
       const response = await axiosInstance.post('/editPost', data, {
         headers: {
-          'Authorization': token,
+            'Authorization': `Bearer ${token}`,
         },
         params: { id }, 
       });
